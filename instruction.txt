@@ -1,0 +1,10 @@
+sudo apt update
+sudo apt install -y nasm qemu-system-x86 make build-essential binutils
+
+
+
+nasm -v
+qemu-system-x86_64 --version
+make --version
+gcc --version
+ld --version
