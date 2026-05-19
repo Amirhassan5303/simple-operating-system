@@ -1,1 +1,5 @@
 boot.bin
+kernel.bin
+entry.o
+kernel.o
+os.img
