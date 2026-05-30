@@ -40,6 +40,18 @@ void strcpy(char* dest, const char* src) {
 static int cursor_x = 0;
 static int cursor_y = 0;
 
+void update_cursor(int x, int y) {
+    unsigned short pos = y * SCREEN_WIDTH + x;
+
+    // ارسال بایت پایین موقعیت به پورت VGA
+    outb(0x3D4, 0x0F);
+    outb(0x3D5, (unsigned char)(pos & 0xFF));
+
+    // ارسال بایت بالای موقعیت به پورت VGA
+    outb(0x3D4, 0x0E);
+    outb(0x3D5, (unsigned char)((pos >> 8) & 0xFF));
+}
+
 void clear_screen() {
     volatile char* video = (volatile char*)VIDEO_MEMORY;
     for (int i = 0; i < SCREEN_WIDTH * SCREEN_HEIGHT * 2; i += 2) {
@@ -48,6 +60,7 @@ void clear_screen() {
     }
     cursor_x = 0;
     cursor_y = 0;
+    update_cursor(cursor_x, cursor_y);
 }
 
 void scroll() {
@@ -60,18 +73,19 @@ void scroll() {
         video[i+1] = WHITE_ON_BLACK;
     }
     cursor_y = SCREEN_HEIGHT-1;
+    update_cursor(cursor_x, cursor_y);
 }
 
 void print_char(char c) {
     volatile char* video = (volatile char*)VIDEO_MEMORY;
-    
+
     if (c == '\n') {
         cursor_x = 0;
         cursor_y++;
         if (cursor_y >= SCREEN_HEIGHT) scroll();
         return;
     }
-    
+
     if (c == '\b') {
         if (cursor_x > 0) {
             cursor_x--;
@@ -81,17 +95,18 @@ void print_char(char c) {
         }
         return;
     }
-    
+
     int pos = (cursor_y*SCREEN_WIDTH + cursor_x)*2;
     video[pos] = c;
     video[pos+1] = WHITE_ON_BLACK;
-    
+
     cursor_x++;
     if (cursor_x >= SCREEN_WIDTH) {
         cursor_x = 0;
         cursor_y++;
         if (cursor_y >= SCREEN_HEIGHT) scroll();
     }
+    update_cursor(cursor_x, cursor_y);
 }
 
 void print(const char* str) {
@@ -115,7 +130,7 @@ char get_char() {
         0,'\\','z','x','c','v','b','n','m',',','.','/',0,
         '*',0,' '
     };
-    
+
     while (1) {
         while (!(inb(0x64) & 1));
         scancode = inb(0x60);
@@ -151,11 +166,11 @@ void read_line(char* buffer, int max) {
 // شل
 void shell() {
     char input[128];
-    
+
     while (1) {
         print("> ");
         read_line(input, 128);
-        
+
         if (strcmp(input, "help") == 0) {
             print_line("Commands:");
             print_line("  help  - show this help");

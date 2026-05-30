@@ -16,7 +16,7 @@ start:
     int 0x13
 
     mov ah, 0x02
-    mov al, 30          
+    mov al, 30
     mov ch, 0
     mov cl, 2
     mov dh, 0
@@ -27,11 +27,11 @@ start:
     ; Switch to protected mode
     cli
     lgdt [gdt_descriptor]
-    
+
     mov eax, cr0
     or eax, 1
     mov cr0, eax
-    
+
     jmp 0x08:protected_mode
 
 disk_error:
@@ -58,7 +58,7 @@ protected_mode:
     mov gs, ax
     mov ss, ax
     mov esp, 0x90000
-    
+
     jmp 0x1000
 
 ; GDT
