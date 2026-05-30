@@ -24,6 +24,16 @@ int strcmp(const char* s1, const char* s2) {
     return *(unsigned char*)s1 - *(unsigned char*)s2;
 }
 
+int strncmp(const char* s1, const char* s2, int n) {
+    while (n > 0 && *s1 && (*s1 == *s2)) {
+        s1++;
+        s2++;
+        n--;
+    }
+    if (n == 0) return 0;
+    return *(unsigned char*)s1 - *(unsigned char*)s2;
+}
+
 void strcpy(char* dest, const char* src) {
     while (*src) {
         *dest++ = *src++;
@@ -179,6 +189,15 @@ void shell() {
             print_line("  help  - show this help");
             print_line("  clear - clear screen");
         }
+
+        else if (strncmp(input, "echo ", 5) == 0) {
+            char* text_to_print = &input[5];
+            print_line(text_to_print);
+        }
+        else if (strcmp(input, "echo") == 0) {
+            print_line("");
+        }
+
         else if (strcmp(input, "clear") == 0) {
             clear_screen();
         }
