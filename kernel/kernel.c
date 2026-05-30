@@ -87,14 +87,17 @@ void print_char(char c) {
     }
 
     if (c == '\b') {
-        if (cursor_x > 0) {
-            cursor_x--;
-            int pos = (cursor_y*SCREEN_WIDTH + cursor_x)*2;
-            video[pos] = ' ';
-            video[pos+1] = WHITE_ON_BLACK;
-        }
-        return;
+    if (cursor_x > 0) {
+        cursor_x--;
+    } else if (cursor_y > 0) {
+        cursor_y--;
+        cursor_x = SCREEN_WIDTH - 1;
     }
+    int pos = (cursor_y * SCREEN_WIDTH + cursor_x) * 2;
+    video[pos] = ' ';
+    video[pos+1] = WHITE_ON_BLACK;
+    return;
+}
 
     int pos = (cursor_y*SCREEN_WIDTH + cursor_x)*2;
     video[pos] = c;
