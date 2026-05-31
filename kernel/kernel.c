@@ -188,6 +188,8 @@ void shell() {
             print_line("Commands:");
             print_line("  help  - show this help");
             print_line("  clear - clear screen");
+            print_line("  echo -  echo on the screen");
+            print_line("  credit - show program credit");
         }
 
         else if (strncmp(input, "echo ", 5) == 0) {
@@ -197,7 +199,9 @@ void shell() {
         else if (strcmp(input, "echo") == 0) {
             print_line("");
         }
-
+        else if (strcmp(input, "credit") == 0) {
+            print_line("name: Amirhassan Usefi, project X ");
+        }
         else if (strcmp(input, "clear") == 0) {
             clear_screen();
         }
